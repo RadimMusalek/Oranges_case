@@ -1,7 +1,7 @@
 # Directories sepcific to this project
 /Datasets
 # /logs
-# /results
+/outputs_charts
 # /models
 
 # Byte-compiled / optimized / DLL files
