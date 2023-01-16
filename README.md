@@ -1,4 +1,4 @@
-## Oranges case
+## Orange Queen case
 Exploratory Data Analysis &amp; Machine Learning for Forecasting Quantities and Prices of Oranges in the U.S. market
 
 ## Setup
@@ -27,7 +27,7 @@ Directory structure:
 ├── README.md
 ├── requirements.txt
 ├── results  # gitignored
-└── coffee_harvest_lab
+└── oranges_case_lab
     ├── __init__.py
     ├── check.py
     ├── configs.py
