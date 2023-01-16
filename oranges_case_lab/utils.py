@@ -4,6 +4,7 @@ __author__ = Radim Musalek
 
 import os
 import shutil
+import pandas
 
 
 def delete_dir_content(*, path_to_dir: str):
@@ -17,8 +18,13 @@ def delete_dir_content(*, path_to_dir: str):
             else:
                 os.remove(entry.path)
 
-def model():
+
+def prophet_dafaframe(original_dataframe: pandas.DataFrame, prophet_ds_column_name: str, prophet_y_column_name: str) -> pandas.DataFrame:
     '''
-    Model
+    Prepare original dataframe into Prophet required dataframe structure,
+    i.e. datetime ("ds") and value ("y") columns
     '''
-    return 0
+    prophet_df = original_dataframe[[
+        prophet_ds_column_name, prophet_y_column_name]]
+    prophet_df.columns = ["ds", "y"]
+    return prophet_df
