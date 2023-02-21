@@ -142,18 +142,18 @@ def plot_train_test_pred(
             "product_type is expected to be either 'Conventional' or 'Organic'")
 
     # raise an exception if the input model_type isn't either 'Default' or 'Fine Tuned'
-    if model_type not in ['Default', 'Fine tuned']:
+    if model_type not in ['Default', 'Fine Tuned']:
         raise Exception(
             "model_type is expected to be either 'Default' or 'Fine Tuned'")
 
     # create the training plot part
-    training_dataframe.set_index('ds')['y'].plot(label='training')
+    training_dataframe.set_index('ds')['y'].plot(label='Training')
 
     # create the test plot part
-    test_pred_dataframe.set_index('ds')['y'].plot(label='test')
+    test_pred_dataframe.set_index('ds')['y'].plot(label='Test')
 
     # create the prediction plot part
-    test_pred_dataframe.set_index('ds')['yhat'].plot(label='prediction')
+    test_pred_dataframe.set_index('ds')['yhat'].plot(label='Prediction')
 
     # define the x-axis label name
     plt.xlabel('Date')
@@ -162,14 +162,79 @@ def plot_train_test_pred(
     plt.ylabel(pred_parameter)
 
     # define the title
-    plt.title(f"{pred_parameter} {product_type} - {model_type} model")
+    plt.title(f"{pred_parameter} {product_type} - {model_type} Model")
 
     # show legend
     plt.legend()
 
     # save the plot into the OUTPUTS_DIR
     plt.savefig(str(cnst.OUTPUTS_DIR) +
-                f"/{pred_parameter} {product_type} - {model_type} model.png")
+                f"/{pred_parameter} {product_type} - {model_type} Model.png")
+
+    # return the plot on screen
+    return plt.show()
+
+
+def plot_forecast(
+        original_dataframe: pandas.DataFrame, forecast_dataframe: pandas.DataFrame,
+        pred_parameter: str, product_type: str) -> plt:
+    """Plots a chart of original and forecasted values over period of time.
+
+    Args:
+        original_dataframe (pandas.DataFrame): Dataframe including the original ('y' column) values per date.
+        forecast_dataframe (pandas.DataFrame): Dataframe including the forecasted ('yhat' column) values per date.
+        pred_parameter (str): Expected predicted parameter either 'Average Price' or 'Volume'.
+        product_type (str): Expected product type either 'Conventional' or 'Organic'.
+
+    Raises:
+        Exception: If 'y' column is not found in original_dataframe.
+        Exception: If 'yhat' column is not found in forecast_dataframe.
+        Exception: If the pred_parameter is not either 'Average Price' or 'Volume'.
+        Exception: If the product_type is not either 'Conventional' or 'Organic'.
+
+    Returns:
+        plt: Plots a chart of original and forecasted values over period of time.
+    """
+
+    # raise an exception if the 'y' column name can't be found in the input original_dataframe
+    if 'y' not in original_dataframe.columns:
+        raise Exception("'y' column not found in original_dataframe")
+
+    # raise an exception if the 'yhat' column name can't be found in the input forecast_dataframe
+    if 'yhat' not in forecast_dataframe.columns:
+        raise Exception("'yhat' column not found in forecast_dataframe")
+
+    # raise an exception if the input pred_parameter name isn't either 'Average Price' or 'Volume'
+    if pred_parameter not in ['Average Price', 'Volume']:
+        raise Exception(
+            "pred_parameter is expected to be either 'Average Price' or 'Volume'")
+
+    # raise an exception if the input product_type isn't either 'Conventional' or 'Organic'
+    if product_type not in ['Conventional', 'Organic']:
+        raise Exception(
+            "product_type is expected to be either 'Conventional' or 'Organic'")
+
+    # create the original values plot part
+    original_dataframe.set_index('ds')['y'].plot(label='Original')
+
+    # create the forecasted values plot part
+    forecast_dataframe.set_index('ds')['yhat'].plot(label='Forecast')
+
+    # define the x-axis label name
+    plt.xlabel('Date')
+
+    # define the y-axis label name
+    plt.ylabel(pred_parameter)
+
+    # define the title
+    plt.title(f"{pred_parameter} of {product_type} - Forecast")
+
+    # show legend
+    plt.legend()
+
+    # save the plot into the OUTPUTS_DIR
+    plt.savefig(str(cnst.OUTPUTS_DIR) +
+                f"/{pred_parameter} of {product_type} - Forecast.png")
 
     # return the plot on screen
     return plt.show()
