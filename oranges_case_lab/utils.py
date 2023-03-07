@@ -4,7 +4,7 @@ __author__ = Radim Musalek
 
 import os
 import shutil
-import pandas
+import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 from oranges_case_lab.constants import constants as cnst
@@ -26,13 +26,13 @@ def delete_dir_content(*, path_to_dir: str):
 
 
 def prophet_dafaframe(
-        original_dataframe: pandas.DataFrame, prophet_ds_column_name: str,
-        prophet_y_column_name: str) -> pandas.DataFrame:
+        original_dataframe: pd.DataFrame, prophet_ds_column_name: str,
+        prophet_y_column_name: str) -> pd.DataFrame:
     """Preprocess original dataframe into Prophet required dataframe structure,
         i.e. datetime ('ds') and value ('y') columns.
 
     Args:
-        original_dataframe (pandas.DataFrame): Dataset datetime and value columns to be preprocessed. 
+        original_dataframe (pd.DataFrame): Dataset datetime and value columns to be preprocessed. 
         prophet_ds_column_name (str): Name of the column which will be used as 'ds' column in Prophet.
         prophet_y_column_name (str): Name of the column which will be used as 'y' column in Prophet.
 
@@ -51,12 +51,12 @@ def prophet_dafaframe(
     return prophet_df
 
 
-def show_interactive_plot(pandas_dataframe: pandas.DataFrame, y_column: str, product_type: str) -> px.line:
+def show_interactive_plot(pandas_dataframe: pd.DataFrame, y_column: str, product_type: str) -> px.line:
     """Creates and shows Plotly interactive plot to visulise average prices or quantities development
         of conventional or organic oranges over period of time per region.
 
     Args:
-        pandas_dataframe (pandas.DataFrame): Dataset including total volumns and avg. prices of
+        pd_dataframe (pd.DataFrame): Dataset including total volumns and avg. prices of
             organic and conventional oranges.
         y_column (str): Expected column names 'AveragePrice' or 'TotalVolume'.
         product_type (str): Expected product type 'conventional' or 'organic'.
@@ -96,16 +96,17 @@ def show_interactive_plot(pandas_dataframe: pandas.DataFrame, y_column: str, pro
 
 
 def plot_train_test_pred(
-        training_dataframe: pandas.DataFrame, test_pred_dataframe: pandas.DataFrame,
-        pred_parameter: str, product_type: str, model_type: str) -> plt:
+        training_dataframe: pd.DataFrame, test_pred_dataframe: pd.DataFrame,
+        pred_parameter: str, product_type: str, model_type: str, save_plot: bool) -> plt:
     """Plots a chart of training, test and predicted values over period of time.
 
     Args:
-        training_dataframe (pandas.DataFrame): Dataframe including the training ('y' column) values per date.
-        test_pred_dataframe (pandas.DataFrame): Dataframe including the test ('y' column) and predicted ('yhat' column) values per date.
+        training_dataframe (pd.DataFrame): Dataframe including the training ('y' column) values per date.
+        test_pred_dataframe (pd.DataFrame): Dataframe including the test ('y' column) and predicted ('yhat' column) values per date.
         pred_parameter (str): Expected predicted parameter either 'Average Price' or 'Volume'.
         product_type (str): Expected product type either 'Conventional' or 'Organic'.
         model_type (str): Expected model type either 'Default' or 'Fine Tuned'.
+        save_plot (bool): True if the plot should be save to outputs dir.
 
     Raises:
         Exception: If 'y' column is not found in training_dataframe.
@@ -114,6 +115,7 @@ def plot_train_test_pred(
         Exception: If the pred_parameter is not either 'Average Price' or 'Volume'.
         Exception: If the product_type is not either 'Conventional' or 'Organic'.
         Exception: If the model_type is not either 'Default' or 'Fine Tuned'.
+        Exception: If the save_plot is not a boolean.
 
     Returns:
         plt: Plots a chart of training, test and predicted values over period of time.
@@ -146,6 +148,11 @@ def plot_train_test_pred(
         raise Exception(
             "model_type is expected to be either 'Default' or 'Fine Tuned'")
 
+    # raise an exception if the input save_plot isn't boolean
+    if save_plot is not bool:
+        raise Exception(
+            "save_plot is expected to be boolean, i.e. either True or False")
+
     # create the training plot part
     training_dataframe.set_index('ds')['y'].plot(label='Training')
 
@@ -167,30 +174,33 @@ def plot_train_test_pred(
     # show legend
     plt.legend()
 
-    # save the plot into the OUTPUTS_DIR
-    plt.savefig(str(cnst.OUTPUTS_DIR) +
-                f"/{pred_parameter} {product_type} - {model_type} Model.png")
+    # save the plot into the OUTPUTS_DIR if save_plot is True
+    if save_plot:
+        plt.savefig(str(cnst.OUTPUTS_DIR) +
+                    f"/{pred_parameter} {product_type} - {model_type} Model.png")
 
     # return the plot on screen
     return plt.show()
 
 
 def plot_forecast(
-        original_dataframe: pandas.DataFrame, forecast_dataframe: pandas.DataFrame,
-        pred_parameter: str, product_type: str) -> plt:
+        original_dataframe: pd.DataFrame, forecast_dataframe: pd.DataFrame,
+        pred_parameter: str, product_type: str, save_plot: bool) -> plt:
     """Plots a chart of original and forecasted values over period of time.
 
     Args:
-        original_dataframe (pandas.DataFrame): Dataframe including the original ('y' column) values per date.
-        forecast_dataframe (pandas.DataFrame): Dataframe including the forecasted ('yhat' column) values per date.
+        original_dataframe (pd.DataFrame): Dataframe including the original ('y' column) values per date.
+        forecast_dataframe (pd.DataFrame): Dataframe including the forecasted ('yhat' column) values per date.
         pred_parameter (str): Expected predicted parameter either 'Average Price' or 'Volume'.
         product_type (str): Expected product type either 'Conventional' or 'Organic'.
+        save_plot (bool): True if the plot should be save to outputs dir.
 
     Raises:
         Exception: If 'y' column is not found in original_dataframe.
         Exception: If 'yhat' column is not found in forecast_dataframe.
         Exception: If the pred_parameter is not either 'Average Price' or 'Volume'.
         Exception: If the product_type is not either 'Conventional' or 'Organic'.
+        Exception: If the save_plot is not a boolean.
 
     Returns:
         plt: Plots a chart of original and forecasted values over period of time.
@@ -214,6 +224,11 @@ def plot_forecast(
         raise Exception(
             "product_type is expected to be either 'Conventional' or 'Organic'")
 
+    # raise an exception if the input save_plot isn't boolean
+    if save_plot is not bool:
+        raise Exception(
+            "save_plot is expected to be boolean, i.e. either True or False")
+
     # create the original values plot part
     original_dataframe.set_index('ds')['y'].plot(label='Original')
 
@@ -232,9 +247,10 @@ def plot_forecast(
     # show legend
     plt.legend()
 
-    # save the plot into the OUTPUTS_DIR
-    plt.savefig(str(cnst.OUTPUTS_DIR) +
-                f"/{pred_parameter} of {product_type} - Forecast.png")
+    # save the plot into the OUTPUTS_DIR if save_plot is True
+    if save_plot:
+        plt.savefig(str(cnst.OUTPUTS_DIR) +
+                    f"/{pred_parameter} of {product_type} - Forecast.png")
 
     # return the plot on screen
     return plt.show()
