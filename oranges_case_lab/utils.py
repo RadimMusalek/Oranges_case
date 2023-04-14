@@ -149,7 +149,7 @@ def plot_train_test_pred(
             "model_type is expected to be either 'Default' or 'Fine Tuned'")
 
     # raise an exception if the input save_plot isn't boolean
-    if save_plot is not bool:
+    if not isinstance(save_plot, bool):
         raise Exception(
             "save_plot is expected to be boolean, i.e. either True or False")
 
@@ -225,7 +225,7 @@ def plot_forecast(
             "product_type is expected to be either 'Conventional' or 'Organic'")
 
     # raise an exception if the input save_plot isn't boolean
-    if save_plot is not bool:
+    if not isinstance(save_plot, bool):
         raise Exception(
             "save_plot is expected to be boolean, i.e. either True or False")
 
